@@ -1,0 +1,24 @@
+{
+    "name": "@coveops/counted-tabs",
+    "version": "1.0.0",
+    "description": "A custom Coveo JSUI component to add result counts to tabs",
+    "main": "dist/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "coveops build CountedTabs --template typescript --styles-path src/stylesheets",
+        "serve": "coveops serve --org-id $COVEO_ORG_ID --token $COVEO_API_KEY --port $SERVER_PORT",
+        "precompile": "npm run build"
+    },
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "@coveops/cli": "^0.4.0"
+    },
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "dependencies": {
+        "coveo-search-ui": "^2.8959.10"
+    }
+}
