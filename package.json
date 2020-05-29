@@ -10,7 +10,15 @@
         "precompile": "npm run build"
     },
     "author": "",
-    "license": "MIT",
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/Coveo-Turbo/counted-tabs#readme",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/Coveo-Turbo/counted-tabs.git"
+    },
+    "bugs": {
+      "url": "https://github.com/Coveo-Turbo/counted-tabs/issues"
+    },
     "devDependencies": {
         "@coveops/cli": "^0.4.0"
     },
