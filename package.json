@@ -13,20 +13,21 @@
     "license": "Apache-2.0",
     "homepage": "https://github.com/Coveo-Turbo/counted-tabs#readme",
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/Coveo-Turbo/counted-tabs.git"
+        "type": "git",
+        "url": "git+https://github.com/Coveo-Turbo/counted-tabs.git"
     },
     "bugs": {
-      "url": "https://github.com/Coveo-Turbo/counted-tabs/issues"
+        "url": "https://github.com/Coveo-Turbo/counted-tabs/issues"
     },
     "devDependencies": {
-        "@coveops/cli": "^0.4.0"
+        "@coveops/cli": "^0.5.0"
     },
     "types": "dist/index.d.ts",
     "files": [
         "dist"
     ],
     "dependencies": {
+        "@coveops/turbo-core": "^1.0.0",
         "coveo-search-ui": "^2.8959.10"
     }
 }
