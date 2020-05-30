@@ -1,6 +1,5 @@
 import { 
     Component, 
-    Initialization, 
     IComponentBindings, 
     ComponentOptions,
     $$,
@@ -13,6 +12,7 @@ import {
     IGroupByRequest,
 } from 'coveo-search-ui';
 import {find, each} from 'underscore';
+import { lazyComponent } from '@coveops/turbo-core';
 
 export interface ICountedTabsOptions {
     field: IFieldOption;
@@ -21,6 +21,7 @@ export interface ICountedTabsOptions {
     countTemplate?: string;
 }
 
+@lazyComponent
 export class CountedTabs extends Component {
     static ID = 'CountedTabs';
     static options: ICountedTabsOptions = {
@@ -118,5 +119,3 @@ export class CountedTabs extends Component {
         data.queryBuilder.groupByRequests.push(gbRequest);
     }
 }
-
-Initialization.registerAutoCreateComponent(CountedTabs);
