@@ -20,7 +20,7 @@
         "url": "https://github.com/Coveo-Turbo/counted-tabs/issues"
     },
     "devDependencies": {
-        "@coveops/cli": "^0.5.0"
+        "@coveops/cli": "^0.8.1"
     },
     "types": "dist/index.d.ts",
     "files": [

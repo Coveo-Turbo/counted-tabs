@@ -17,7 +17,7 @@ npm i @coveops/counted-tabs
 Typescript:
 
 ```javascript
-import {CountedTabs, ICountedTabsOptions} from '@coveops/counted-tabs';
+import { CountedTabs, ICountedTabsOptions } from '@coveops/counted-tabs';
 ```
 
 Javascript
@@ -40,6 +40,20 @@ Place the component after the last tab in the `coveo-tab-section`
 <div class="CoveoCountedTabs" data-field="@commontabs"></div>
 ```
 
+## Coveo Pipelines Configuration
+
+In order for this component to work as expected, some changes will be necessary in your pipelines configuration on the Coveo Platform.
+
+**Fields**
+
+A `commontabs` field needs to be added as a Multi-Value Facet. For more information on adding a field, you can start with this reference: https://docs.coveo.com/en/1833/cloud-v2-administrators/adding-and-managing-fields
+
+**Sources**
+
+On each source displaying content in tabs, [under manage mappings](https://docs.coveo.com/en/1640/cloud-v2-administrators/adding-and-managing-source-mappings), add a semi-colon-separated list of all tab ids (as per your UI) that a given resource can see. For more information on mapping rules in Coveo, you can start with this reference: https://docs.coveo.com/en/1640/cloud-v2-administrators/adding-and-managing-source-mappings
+
+In more complex situations, it may be necessary to add the `commontabs` field on a per-document basis, in which case a new post-conversion extension will be necessary. You can get started with your Extension Script with this documentation reference: https://docs.coveo.com/en/156/cloud-v2-developers/coveo-cloud-v2-indexing-pipeline-extensions
+
 ## Options
 
 The following options can be configured:
@@ -57,15 +71,14 @@ Extending the component can be done as follows:
 
 ```javascript
 import { CountedTabs, ICountedTabsOptions } from "@coveops/counted-tabs";
-import { $$, Initialization } from 'coveo-search-ui';
 
 export interface IExtendedCountedTabsOptions extends ICountedTabsOptions {}
 
-protected shouldHideTab(tab: HTMLElement, defaultTabNbRes: number): boolean {
-    //some custom logic here
+export class ExtendedCountedTabs extends CountedTabs {
+    protected shouldHideTab(tab: HTMLElement, defaultTabNbRes: number): boolean {
+        return shouldHide;
+    }
 }
-
-Initialization.registerAutoCreateComponent(FormattedDynamicTabs);
 ```
 
 The following methods can be extended to provide additional functionalities or handle more complex use cases.
