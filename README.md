@@ -1,38 +1,14 @@
 # Counted Tabs
 
-The Counted Tabs component appends the respective counts of results per tab and offers the option to hide tabs that have no content.
+The Counted Tabs component appends to each tab its respective count of results and offers the option to hide tabs that have no content.
 
 Disclaimer: This component was built by the community at large and is not an official Coveo JSUI Component. Use this component at your own risk.
 
 ## Getting Started
 
-1. Install the component into your project.
+### Testing the Component
 
-```
-npm i @coveops/counted-tabs
-```
-
-2. Use the Component or extend it
-
-Typescript:
-
-```javascript
-import { CountedTabs, ICountedTabsOptions } from '@coveops/counted-tabs';
-```
-
-Javascript
-
-```javascript
-const CountedTabs = require('@coveops/counted-tabs').CountedTabs;
-```
-
-3. You can also expose the component alongside other components being built in your project.
-
-```javascript
-export * from '@coveops/counted-tabs'
-```
-
-4. Or for quick testing, you can add the script from unpkg
+For quick testing, you can add the script from unpkg:
 
 ```html
 <script src="https://unpkg.com/@coveops/counted-tabs@latest/dist/index.min.js"></script>
@@ -40,13 +16,41 @@ export * from '@coveops/counted-tabs'
 
 > Disclaimer: Unpkg should be used for testing but not for production.
 
-5. Include the component in your template as follows:
+### Using the Component
 
-Place the component after the last tab in the `coveo-tab-section`
+1. Install the component into your project.
 
-```html
-<div class="CoveoCountedTabs" data-field="@commontabs"></div>
-```
+    ```
+    npm i @coveops/counted-tabs
+    ```
+
+2. Use the component or extend it:
+
+    Typescript
+
+    ```javascript
+    import { CountedTabs, ICountedTabsOptions } from '@coveops/counted-tabs';
+    ```
+
+    Javascript
+
+    ```javascript
+    const CountedTabs = require('@coveops/counted-tabs').CountedTabs;
+    ```
+
+3. You can also expose the component alongside other components being built in your project.
+
+    ```javascript
+    export * from '@coveops/counted-tabs'
+    ```
+
+4. Include the component in your template as follows:
+
+    Place the component after the last tab in the `coveo-tab-section`.
+
+    ```html
+    <div class="CoveoCountedTabs" data-field="@commontabs"></div>
+    ```
 
 ## Coveo Pipelines Configuration
 
@@ -54,13 +58,13 @@ In order for this component to work as expected, some changes will be necessary 
 
 **Fields**
 
-A `commontabs` field needs to be added as a Multi-Value Facet. For more information on adding a field, you can start with this reference: https://docs.coveo.com/en/1833/cloud-v2-administrators/adding-and-managing-fields
+A `commontabs` field needs to be added as a Multi-Value Facet. For more information on adding a field, you can start with this reference: [Adding and Managing Fields](https://docs.coveo.com/en/1833/cloud-v2-administrators/adding-and-managing-fields).
 
 **Sources**
 
-On each source displaying content in tabs, [under manage mappings](https://docs.coveo.com/en/1640/cloud-v2-administrators/adding-and-managing-source-mappings), add a semi-colon-separated list of all tab ids (as per your UI) that a given resource can see. For more information on mapping rules in Coveo, you can start with this reference: https://docs.coveo.com/en/1640/cloud-v2-administrators/adding-and-managing-source-mappings
+On each source displaying content in tabs, [under manage mappings](https://docs.coveo.com/en/1640/cloud-v2-administrators/adding-and-managing-source-mappings), add a semi-colon-separated list of all tab ids (as per your UI) that a given resource can see. For more information on mapping rules in Coveo, you can start with this reference: [Adding and Managing Source Mappings](https://docs.coveo.com/en/1640/cloud-v2-administrators/adding-and-managing-source-mappings).
 
-In more complex situations, it may be necessary to add the `commontabs` field on a per-document basis, in which case a new post-conversion extension will be necessary. You can get started with your Extension Script with this documentation reference: https://docs.coveo.com/en/156/cloud-v2-developers/coveo-cloud-v2-indexing-pipeline-extensions
+In more complex situations, it may be necessary to add the `commontabs` field on a per-document basis, in which case a new post-conversion extension will be necessary. You can get started with your Extension Script with this documentation reference: [Coveo Cloud V2 Indexing Pipeline Extensions](https://docs.coveo.com/en/156/cloud-v2-developers/coveo-cloud-v2-indexing-pipeline-extensions).
 
 ## Options
 
