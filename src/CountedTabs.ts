@@ -15,20 +15,18 @@ import {find, each} from 'underscore';
 import { lazyComponent } from '@coveops/turbo-core';
 
 export interface ICountedTabsOptions {
-    field: IFieldOption;
-    defaultTab?: string;
     hideWhenEmpty?: boolean;
     countTemplate?: string;
+    maximumGroupByResult?: number;
 }
 
 @lazyComponent
 export class CountedTabs extends Component {
     static ID = 'CountedTabs';
     static options: ICountedTabsOptions = {
-        field: ComponentOptions.buildFieldOption(),
-        defaultTab: ComponentOptions.buildStringOption({ defaultValue: 'All' }),
         hideWhenEmpty: ComponentOptions.buildBooleanOption({ defaultValue: true }),
         countTemplate: ComponentOptions.buildStringOption({ defaultValue: '${count}'}),
+        maximumGroupByResult: ComponentOptions.buildNumberOption({ defaultValue: 10 })
     };
 
     constructor(public element: HTMLElement, public options: ICountedTabsOptions, public bindings: IComponentBindings) {
@@ -39,19 +37,18 @@ export class CountedTabs extends Component {
         this.bind.onRootElement(QueryEvents.doneBuildingQuery, (args: IDoneBuildingQueryEventArgs) => this.handleDoneBuildingQuery(args));
     }
 
-    private updateTabsState(gbResValues: IGroupByValue[]) {
+    private updateTabsState(gbRes: IGroupByResult[]) {
         let tabEl = document.getElementsByClassName('CoveoTab');
-        let defaultTabNbRes = this.getNumberOfDefaultTabResults(gbResValues);
 
-        each(tabEl, (tab: HTMLElement) => {
-            const gbVal: IGroupByValue = find(gbResValues, res => res.value == tab.getAttribute("data-id") );
-
+        each(tabEl, (tab: HTMLElement, index: number) => {
             let nbRes: number = 0;
-            if (gbVal) {
-                nbRes = gbVal.numberOfResults;
+
+            each(gbRes[index].values, (value: IGroupByValue) => { nbRes += value.numberOfResults });
+            
+            if (gbRes[index].values.length > 0) {
                 $$(tab).removeClass('coveo-hidden');
             } else {
-                if (this.shouldHideTab(tab, defaultTabNbRes)) {
+                if (this.options.hideWhenEmpty) {
                     $$(tab).addClass('coveo-hidden');
                 }
             }
@@ -66,25 +63,6 @@ export class CountedTabs extends Component {
         });
     }
 
-    private getNumberOfDefaultTabResults(gbResValues: IGroupByValue[]) {
-        const {numberOfResults = 0} = find(gbResValues, res => res.value == this.options.defaultTab) || {};
-
-        return numberOfResults;
-    }
-
-    protected shouldHideTab(tab: HTMLElement, defaultTabNbRes: number): boolean {
-        if (!this.options.hideWhenEmpty) {
-            return false;
-        }
-
-        return (
-                tab.getAttribute('data-id') != this.options.defaultTab &&
-                tab.className.indexOf('coveo-selected') == -1
-            ) || 
-            defaultTabNbRes == 0
-        ;
-    }
-
     protected formatCount(count) {
         const {countTemplate} = this.options;
         return countTemplate.replace(/\$\{(.*?)\}/g, count);
@@ -95,27 +73,37 @@ export class CountedTabs extends Component {
     }
 
     protected handleDeferredQuerySuccess(data: IQuerySuccessEventArgs) {
-        const field = this.options.field.toString().split('@')[1];
-        let gbResult: IGroupByResult = find(data.results.groupByResults, res => res.field === field);
-        this.updateTabsState(gbResult.values);
+        this.updateTabsState(data.results.groupByResults);
     }
 
-    protected buildGroupByRequest(field: string) {
+    protected buildGroupByRequest(expression: string) {
         return {
-            'field': field,
-            'maximumNumberOfValues': 10,
+            'field': 'source',
+            'maximumNumberOfValues': this.options.maximumGroupByResult,
             'sortCriteria': 'occurrences',
             'injectionDepth': 10000,
             'completeFacetWithStandardValues': true,
             'allowedValues': [],
             'advancedQueryOverride': '@uri',
-            'constantQueryOverride': '@uri'
+            'constantQueryOverride': expression
         };
     }
 
     protected handleDoneBuildingQuery(data: IDoneBuildingQueryEventArgs) {
-        let gbRequest: IGroupByRequest = this.buildGroupByRequest(this.options.field.toString());
-        gbRequest.queryOverride = data.queryBuilder.expression.build();
-        data.queryBuilder.groupByRequests.push(gbRequest);
+        let gbRequest: IGroupByRequest;
+        each(this.getTabExpressions(), (expression: string) => {
+            gbRequest = this.buildGroupByRequest(expression);
+            gbRequest.queryOverride = data.queryBuilder.expression.build();
+            data.queryBuilder.groupByRequests.push(gbRequest);
+        });
+    }
+
+    protected getTabExpressions(): string[] {
+        const tabEl = document.getElementsByClassName('CoveoTab');
+        let expressions: string[] = [];
+        each(tabEl, (tab) => {
+                expressions.push(tab.getAttribute('data-expression'));
+        });
+        return expressions;
     }
 }

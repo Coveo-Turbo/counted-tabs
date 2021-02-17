@@ -6,7 +6,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "coveops build CountedTabs --template typescript --styles-path src/stylesheets",
-        "serve": "coveops serve --org-id $COVEO_ORG_ID --token $COVEO_API_KEY --port $SERVER_PORT",
+        "serve": "coveops serve --org-id $COVEO_ORG_ID --token $COVEO_TOKEN --port 8080 --rest-uri $COVEO_REST_URI --path sandbox",
         "precompile": "npm run build"
     },
     "author": "",
@@ -20,14 +20,14 @@
         "url": "https://github.com/Coveo-Turbo/counted-tabs/issues"
     },
     "devDependencies": {
-        "@coveops/cli": "^0.8.1"
+        "@coveops/cli": "^0.14.2"
     },
     "types": "dist/index.d.ts",
     "files": [
         "dist"
     ],
     "dependencies": {
-        "@coveops/turbo-core": "^1.0.0",
-        "coveo-search-ui": "^2.8959.10"
+        "@coveops/turbo-core": "^1.1.1",
+        "coveo-search-ui": "^2.9659.2"
     }
 }

@@ -42,16 +42,16 @@
         <div class="CoveoAnalytics"></div>
         <div class="coveo-tab-section">
           <a class="CoveoTab" data-id="All" data-caption="All Content"></a>
-          <a class="CoveoTab" data-id="code" data-caption="Code"></a>
-          <a class="CoveoTab" data-id="ubuntu" data-caption="Ubuntu"></a>
-          <div class="CoveoCountedTabs" data-field="@commontabs" data-count-template="(${count})" data-hide-when-empty="false"></div>
+          <a class="CoveoTab" data-id="html" data-caption="HTML" data-expression='@filetype="html"'></a>
+          <a class="CoveoTab" data-id="twitter" data-caption="Twitter" data-expression='@filetype="twitter2tweet"'></a>
+          <div class="CoveoCountedTabs" data-default-tab="nope" data-count-template="(${count})" data-hide-when-empty="false" data-maximum-group-by-result="26"></div>
         </div>
         <div class="coveo-search-section">
           <div class="CoveoSearchbox" data-enable-omnibox="true"></div>
         </div>
         <div class="coveo-main-section">
           <div class="coveo-facet-column">
-            <div class="CoveoDynamicFacet" data-title="Type" data-field="@objecttype" data-tab="All"></div>
+            <div class="CoveoDynamicFacet" data-title="Source" data-field="@source" data-tab="All,html"></div>
             <div class="CoveoDynamicFacet" data-title="FileType" data-field="@filetype" data-tab="All"></div>
             <div class="CoveoDynamicFacet" data-title="Author" data-field="@author" data-tab="All"></div>
           </div>
