@@ -1,3 +1,4 @@
+import { lazyComponent } from '@coveops/turbo-core';
 import { 
     Component, 
     IComponentBindings, 
@@ -8,8 +9,7 @@ import {
     IQuerySuccessEventArgs,
     IDoneBuildingQueryEventArgs,
     IGroupByValue,
-    IGroupByRequest,
-    Initialization,
+    IGroupByRequest
 } from 'coveo-search-ui';
 import { each } from 'underscore';
 
@@ -18,6 +18,8 @@ export interface ICountedTabsOptions {
     countTemplate?: string;
     maximumGroupByResult?: number;
 }
+
+@lazyComponent
 export class CountedTabs extends Component {
     static ID = 'CountedTabs';
     static options: ICountedTabsOptions = {
@@ -104,5 +106,3 @@ export class CountedTabs extends Component {
         return expressions;
     }
 }
-
-Initialization.registerAutoCreateComponent(CountedTabs);
