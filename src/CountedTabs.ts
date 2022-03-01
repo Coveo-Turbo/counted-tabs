@@ -5,6 +5,7 @@ import {
     $$,
     IGroupByResult,
     IFieldOption,
+    IQueryExpression,
     QueryEvents,
     IQuerySuccessEventArgs,
     IDoneBuildingQueryEventArgs,
@@ -19,6 +20,9 @@ export interface ICountedTabsOptions {
     defaultTab?: string;
     hideWhenEmpty?: boolean;
     countTemplate?: string;
+    constantQueryOverride?: IQueryExpression;
+    advancedQueryOverride?: IQueryExpression;
+
 }
 
 @lazyComponent
@@ -29,6 +33,8 @@ export class CountedTabs extends Component {
         defaultTab: ComponentOptions.buildStringOption({ defaultValue: 'All' }),
         hideWhenEmpty: ComponentOptions.buildBooleanOption({ defaultValue: true }),
         countTemplate: ComponentOptions.buildStringOption({ defaultValue: '${count}'}),
+        constantQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri'}),
+        advancedQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri'}),
     };
 
     constructor(public element: HTMLElement, public options: ICountedTabsOptions, public bindings: IComponentBindings) {
@@ -100,21 +106,22 @@ export class CountedTabs extends Component {
         this.updateTabsState(gbResult.values);
     }
 
-    protected buildGroupByRequest(field: string) {
+    protected buildGroupByRequest() {
+        const {field, advancedQueryOverride, constantQueryOverride} = this.options;
         return {
-            'field': field,
+            field: field.toString(),
+            advancedQueryOverride,
+            constantQueryOverride,
             'maximumNumberOfValues': 10,
             'sortCriteria': 'occurrences',
             'injectionDepth': 10000,
             'completeFacetWithStandardValues': true,
-            'allowedValues': [],
-            'advancedQueryOverride': '@uri',
-            'constantQueryOverride': '@uri'
+            'allowedValues': []
         };
     }
 
     protected handleDoneBuildingQuery(data: IDoneBuildingQueryEventArgs) {
-        let gbRequest: IGroupByRequest = this.buildGroupByRequest(this.options.field.toString());
+        let gbRequest: IGroupByRequest = this.buildGroupByRequest();
         gbRequest.queryOverride = data.queryBuilder.expression.build();
         data.queryBuilder.groupByRequests.push(gbRequest);
     }
