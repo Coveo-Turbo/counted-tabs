@@ -19,6 +19,7 @@ export interface ICountedTabsOptions {
     field: IFieldOption;
     defaultTab?: string;
     hideWhenEmpty?: boolean;
+    enableAdvancedExpression?: boolean;
     countTemplate?: string;
     constantQueryOverride?: IQueryExpression;
     advancedQueryOverride?: IQueryExpression;
@@ -32,6 +33,7 @@ export class CountedTabs extends Component {
         field: ComponentOptions.buildFieldOption(),
         defaultTab: ComponentOptions.buildStringOption({ defaultValue: 'All' }),
         hideWhenEmpty: ComponentOptions.buildBooleanOption({ defaultValue: true }),
+        enableAdvancedExpression: ComponentOptions.buildBooleanOption({ defaultValue: false }),
         countTemplate: ComponentOptions.buildStringOption({ defaultValue: '${count}'}),
         constantQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri'}),
         advancedQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri'}),
@@ -123,6 +125,9 @@ export class CountedTabs extends Component {
     protected handleDoneBuildingQuery(data: IDoneBuildingQueryEventArgs) {
         let gbRequest: IGroupByRequest = this.buildGroupByRequest();
         gbRequest.queryOverride = data.queryBuilder.expression.build();
+        if(this.options.enableAdvancedExpression){ 
+            gbRequest.advancedQueryOverride = data.queryBuilder.advancedExpression.build(); 
+        }
         data.queryBuilder.groupByRequests.push(gbRequest);
     }
 }
