@@ -1,6 +1,6 @@
-import { 
-    Component, 
-    IComponentBindings, 
+import {
+    Component,
+    IComponentBindings,
     ComponentOptions,
     $$,
     IGroupByResult,
@@ -12,7 +12,7 @@ import {
     IGroupByValue,
     IGroupByRequest,
 } from 'coveo-search-ui';
-import {find, each} from 'underscore';
+import { find, each } from 'underscore';
 import { lazyComponent } from '@coveops/turbo-core';
 
 export interface ICountedTabsOptions {
@@ -23,6 +23,7 @@ export interface ICountedTabsOptions {
     countTemplate?: string;
     constantQueryOverride?: IQueryExpression;
     advancedQueryOverride?: IQueryExpression;
+    hideCount?: boolean;
 
 }
 
@@ -34,9 +35,10 @@ export class CountedTabs extends Component {
         defaultTab: ComponentOptions.buildStringOption({ defaultValue: 'All' }),
         hideWhenEmpty: ComponentOptions.buildBooleanOption({ defaultValue: true }),
         enableAdvancedExpression: ComponentOptions.buildBooleanOption({ defaultValue: false }),
-        countTemplate: ComponentOptions.buildStringOption({ defaultValue: '${count}'}),
-        constantQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri'}),
-        advancedQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri'}),
+        countTemplate: ComponentOptions.buildStringOption({ defaultValue: '${count}' }),
+        constantQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri' }),
+        advancedQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri' }),
+        hideCount: ComponentOptions.buildBooleanOption({ defaultValue: false }),
     };
 
     constructor(public element: HTMLElement, public options: ICountedTabsOptions, public bindings: IComponentBindings) {
@@ -52,7 +54,7 @@ export class CountedTabs extends Component {
         let defaultTabNbRes = this.getNumberOfDefaultTabResults(gbResValues);
 
         each(tabEl, (tab: HTMLElement) => {
-            const gbVal: IGroupByValue = find(gbResValues, res => res.value == tab.getAttribute("data-id") );
+            const gbVal: IGroupByValue = find(gbResValues, res => res.value == tab.getAttribute("data-id"));
 
             let nbRes: number = 0;
             if (gbVal) {
@@ -75,7 +77,7 @@ export class CountedTabs extends Component {
     }
 
     private getNumberOfDefaultTabResults(gbResValues: IGroupByValue[]) {
-        const {numberOfResults = 0} = find(gbResValues, res => res.value == this.options.defaultTab) || {};
+        const { numberOfResults = 0 } = find(gbResValues, res => res.value == this.options.defaultTab) || {};
 
         return numberOfResults;
     }
@@ -86,20 +88,21 @@ export class CountedTabs extends Component {
         }
 
         return (
-                tab.getAttribute('data-id') != this.options.defaultTab &&
-                tab.className.indexOf('coveo-selected') == -1
-            ) || 
+            tab.getAttribute('data-id') != this.options.defaultTab &&
+            tab.className.indexOf('coveo-selected') == -1
+        ) ||
             defaultTabNbRes == 0
-        ;
+            ;
     }
 
     protected formatCount(count) {
-        const {countTemplate} = this.options;
+        const { countTemplate } = this.options;
         return countTemplate.replace(/\$\{(.*?)\}/g, count);
     }
 
     protected getCountElement(count): HTMLElement {
-        return $$('span', { id: 'count', class: 'tab-count' }, this.formatCount(count)).el;
+        const { hideCount } = this.options;
+        return !hideCount ? $$('span', { id: 'count', class: 'tab-count' }, this.formatCount(count)).el : $$('span', { class: 'tab-count' }, '').el;
     }
 
     protected handleDeferredQuerySuccess(data: IQuerySuccessEventArgs) {
@@ -109,7 +112,7 @@ export class CountedTabs extends Component {
     }
 
     protected buildGroupByRequest() {
-        const {field, advancedQueryOverride, constantQueryOverride} = this.options;
+        const { field, advancedQueryOverride, constantQueryOverride } = this.options;
         return {
             field: field.toString(),
             advancedQueryOverride,
@@ -125,8 +128,8 @@ export class CountedTabs extends Component {
     protected handleDoneBuildingQuery(data: IDoneBuildingQueryEventArgs) {
         let gbRequest: IGroupByRequest = this.buildGroupByRequest();
         gbRequest.queryOverride = data.queryBuilder.expression.build();
-        if(this.options.enableAdvancedExpression){ 
-            gbRequest.advancedQueryOverride = data.queryBuilder.advancedExpression.build(); 
+        if (this.options.enableAdvancedExpression) {
+            gbRequest.advancedQueryOverride = data.queryBuilder.advancedExpression.build();
         }
         data.queryBuilder.groupByRequests.push(gbRequest);
     }
