@@ -70,9 +70,10 @@ export class CountedTabs extends Component {
             if (countEl) {
                 tab.removeChild(countEl);
             }
-
-            let count = this.getCountElement(nbRes);
-            tab.appendChild(count);
+            if (!this.options.hideCount) {
+                let count = this.getCountElement(nbRes);
+                tab.appendChild(count);
+            }
         });
     }
 
@@ -101,8 +102,7 @@ export class CountedTabs extends Component {
     }
 
     protected getCountElement(count): HTMLElement {
-        const { hideCount } = this.options;
-        return !hideCount ? $$('span', { id: 'count', class: 'tab-count' }, this.formatCount(count)).el : $$('span', { class: 'tab-count' }, '').el;
+        return $$('span', { id: 'count', class: 'tab-count' }, this.formatCount(count)).el;
     }
 
     protected handleDeferredQuerySuccess(data: IQuerySuccessEventArgs) {
