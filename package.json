@@ -1,6 +1,6 @@
 {
     "name": "@coveops/counted-tabs",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "description": "A custom Coveo JSUI component to add result counts to tabs",
     "main": "dist/index.js",
     "scripts": {
