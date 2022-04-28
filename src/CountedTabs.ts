@@ -11,6 +11,7 @@ import {
     IDoneBuildingQueryEventArgs,
     IGroupByValue,
     IGroupByRequest,
+    state,
 } from 'coveo-search-ui';
 import { find, each } from 'underscore';
 import { lazyComponent } from '@coveops/turbo-core';
@@ -24,7 +25,8 @@ export interface ICountedTabsOptions {
     constantQueryOverride?: IQueryExpression;
     advancedQueryOverride?: IQueryExpression;
     hideCount?: boolean;
-
+    stickyTabs: string[];
+    keepTabsWhenDefault: boolean;
 }
 
 @lazyComponent
@@ -39,6 +41,8 @@ export class CountedTabs extends Component {
         constantQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri' }),
         advancedQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri' }),
         hideCount: ComponentOptions.buildBooleanOption({ defaultValue: false }),
+        stickyTabs: ComponentOptions.buildListOption({defaultValue: []}),
+        keepTabsWhenDefault: ComponentOptions.buildBooleanOption({ defaultValue: false }),
     };
 
     constructor(public element: HTMLElement, public options: ICountedTabsOptions, public bindings: IComponentBindings) {
@@ -47,6 +51,10 @@ export class CountedTabs extends Component {
 
         this.bind.onRootElement(QueryEvents.deferredQuerySuccess, (args: IQuerySuccessEventArgs) => this.handleDeferredQuerySuccess(args));
         this.bind.onRootElement(QueryEvents.doneBuildingQuery, (args: IDoneBuildingQueryEventArgs) => this.handleDoneBuildingQuery(args));
+    }
+
+    private selectedTabIsDefault(): boolean {
+        return state(this.element, 't') === this.options.defaultTab;
     }
 
     private updateTabsState(gbResValues: IGroupByValue[]) {
@@ -85,6 +93,14 @@ export class CountedTabs extends Component {
 
     protected shouldHideTab(tab: HTMLElement, defaultTabNbRes: number): boolean {
         if (!this.options.hideWhenEmpty) {
+            return false;
+        }
+
+        if (this.options.hideWhenEmpty && this.options.stickyTabs.includes(tab.getAttribute('data-id'))) {
+            return false;
+        }
+
+        if (this.options.keepTabsWhenDefault && !this.selectedTabIsDefault()) {
             return false;
         }
 
