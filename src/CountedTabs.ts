@@ -27,6 +27,7 @@ export interface ICountedTabsOptions {
     hideCount?: boolean;
     stickyTabs: string[];
     keepTabsWhenDefault: boolean;
+    sanitizeQuery: boolean;
 }
 
 @lazyComponent
@@ -41,8 +42,9 @@ export class CountedTabs extends Component {
         constantQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri' }),
         advancedQueryOverride: ComponentOptions.buildQueryExpressionOption({ defaultValue: '@uri' }),
         hideCount: ComponentOptions.buildBooleanOption({ defaultValue: false }),
-        stickyTabs: ComponentOptions.buildListOption({defaultValue: []}),
+        stickyTabs: ComponentOptions.buildListOption({ defaultValue: [] }),
         keepTabsWhenDefault: ComponentOptions.buildBooleanOption({ defaultValue: false }),
+        sanitizeQuery: ComponentOptions.buildBooleanOption({ defaultValue: false }),
     };
 
     constructor(public element: HTMLElement, public options: ICountedTabsOptions, public bindings: IComponentBindings) {
@@ -112,6 +114,12 @@ export class CountedTabs extends Component {
             ;
     }
 
+    protected escapeRegExp(string) {
+        if (string === "+" || string === "#")
+            return "";
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    }
+
     protected formatCount(count) {
         const { countTemplate } = this.options;
         return countTemplate.replace(/\$\{(.*?)\}/g, count);
@@ -143,7 +151,8 @@ export class CountedTabs extends Component {
 
     protected handleDoneBuildingQuery(data: IDoneBuildingQueryEventArgs) {
         let gbRequest: IGroupByRequest = this.buildGroupByRequest();
-        gbRequest.queryOverride = data.queryBuilder.expression.build();
+        const builtQuery = data.queryBuilder.expression.build();
+        gbRequest.queryOverride = this.options.sanitizeQuery ? this.escapeRegExp(builtQuery) : builtQuery;
         if (this.options.enableAdvancedExpression) {
             gbRequest.advancedQueryOverride = data.queryBuilder.advancedExpression.build();
         }
